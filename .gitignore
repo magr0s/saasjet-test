@@ -1,0 +1,13 @@
+*.iml
+*.idea
+.idea/
+.DS_Store
+node_modules/
+*.pem
+*.pem
+*.crt
+*.zip
+*.csv
+*.tsv
+*.zip
+
