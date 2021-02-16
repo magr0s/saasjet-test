@@ -4,7 +4,7 @@
         "port": 3000,
         "store": {
             "adapter": "mongodb",
-            "url": "mongodb://127.0.0.1:27017/TEST",
+            "url": "mongodb+srv://magr0s:WbbYMk4tIarZX71D@cluster0.x4fyg.mongodb.net/SaasjetTest?retryWrites=true&w=majority",
             "collection": "AddonSettings"
         }
     }

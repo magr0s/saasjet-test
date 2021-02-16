@@ -35,11 +35,15 @@ app.use(session({
 let MongoClient = require('mongodb').MongoClient;
 getdb();
 
-global.databaseName = "TEST";
+global.databaseName = "SaasjetTest";
 global.JiraAccountInfoStore = "jira";
 
 async function getdb() {
-    global.connection = await MongoClient.connect("mongodb://localhost:27017/", {useNewUrlParser: true})
+    global.connection = await MongoClient.connect("mongodb+srv://magr0s:WbbYMk4tIarZX71D@cluster0.x4fyg.mongodb.net/SaasjetTest?retryWrites=true&w=majority", {
+        useNewUrlParser: true,
+        useUnifiedTopology: true
+    });
+    
     global.database = await global.connection.db(global.databaseName);
 
 
