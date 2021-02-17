@@ -33,7 +33,15 @@ module.exports = function (app, addon) {
 
 
   app.get('/main-page', addon.authenticate(), async function (req, res) {
-    res.render("main-page");
+    const httpClient = addon.httpClient(req);
+
+    httpClient.get('/rest/api/3/filter/search', (err, resp, body) => {
+      if (err) res.status(res.statusCode).send(err);
+
+      const { values: filters } = JSON.parse(body);
+
+      res.render("main-page", { filters });
+    });
   });
 
   app.post('/main-page', addon.checkValidToken(), async function (req, res) {

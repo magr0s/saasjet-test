@@ -1,7 +1,17 @@
-<div id="main-table-panel" style="overflow-x: auto; height: inherit">
-    <h3>Everything is successfully installed. You can start developing 😉</h3>
+<div id="main-table-panel" class="py-3" style="overflow-x: auto; height: inherit">
+    <div class="container">
+      <form class="aui large-label">
+        <aui-label for="filter-select">Select issues by filter:</aui-label>
+        <aui-select
+          id="filter-select"
+          class="ml-2"
+          name="filter"
+          placeholder="default filter"
+        >
+          {{#filters}}
+            <aui-option value="{{ id }}">{{ name }}</aui-option>
+          {{/filters}}
+        </aui-select>
+      </form>
+    </div>
 </div>
-
-
-
-
