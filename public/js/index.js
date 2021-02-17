@@ -33,7 +33,7 @@ $(document).ready(function () {
           return memo;
         }, {});
 
-        const collection = result.reduce((memo, { fields }) => {
+        const collection = result.reduce((memo, { id, fields }) => {
           const {
             assignee,
             status
@@ -43,33 +43,27 @@ $(document).ready(function () {
 
           if (!assignee) {
             if (!memo.unknown) memo.unknown = {};
+            if (!memo.unknown[statusId]) memo.unknown[statusId] = [];
 
-            memo.unknown[statusId]
-              ? memo.unknown[statusId]++
-              : memo.unknown[statusId] = 1;
+            memo.unknown[statusId].push(id);
           } else {
             const { accountId } = assignee;
 
             if (!memo[accountId]) memo[accountId] = {};
+            if (!memo[accountId][statusId]) memo[accountId][statusId] = [];
 
-            memo[accountId][statusId]
-              ? memo[accountId][statusId]++
-              : memo[accountId][statusId] = 1;
+            memo[accountId][statusId].push(id);
           }
 
           return memo;
         }, {});
 
-        console.log(statusesCache);
-
         const cols = ['Assignee', ...Object.values(statusesCache)];
 
         const rows = Object.entries(collection)
           .reduce((memo, [assignee, data]) => {
-            console.log(data);
-
             const values = Object.keys(statusesCache)
-              .map((k) => data[k] || 0)
+              .map((k) => data[k] || []);
 
             memo.push([
               assigneeCache[assignee] || 'Unknown',
@@ -91,10 +85,20 @@ $(document).ready(function () {
 });
 
 function fillTableResult ($el, cols, rows) {
-  const head = `<td>${cols.join('</td><td>')}</td>`
+  const head = `<td>${cols.join('</td><td>')}</td>`;
 
   const body = rows.map((row) => {
-    const cells = row.map(c => `<td>${c}</td>`);
+    console.log(row);
+
+    const cells = row.map((c, i) => {
+      if (Array.isArray(c)) {
+        return c.length
+          ? `<td><a href="${window.baseUrl}/issues/?jql=id in (${c.join()})">${c.length}</a></td>`
+          : `<td>${c.length}</td>`;
+      }
+
+      return `<td>${c}</td>`;
+    });
 
     return `<tr>${cells.join('')}</tr>`;
   });
