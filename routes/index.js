@@ -1,3 +1,4 @@
+const { rejects } = require("assert");
 const fs = require("fs")
 
 module.exports = function (app, addon) {
@@ -31,7 +32,6 @@ module.exports = function (app, addon) {
     });
   });
 
-
   app.get('/main-page', addon.authenticate(), async function (req, res) {
     const httpClient = addon.httpClient(req);
 
@@ -46,6 +46,47 @@ module.exports = function (app, addon) {
 
   app.post('/main-page', addon.checkValidToken(), async function (req, res) {
 
+  });
+
+  app.get('/api/filter-result', addon.authenticate(), async function (req, res) {
+    const {
+      query: {
+        filterId
+      }
+    } = req;
+
+    const httpClient = addon.httpClient(req);
+
+    const getFilter = () =>
+      new Promise((resolve, reject) =>
+        httpClient.get(
+          `/rest/api/3/filter/${filterId}`,
+          (err, res, body) => err ? reject(err) : resolve(JSON.parse(body))
+        )
+      );
+
+    const searchIssuesByJQL = (jql) =>
+      new Promise((resolve, reject) =>
+        httpClient.get(
+          `/rest/api/3/search?jql=${jql}`,
+          (err, res, body) => err ? reject(err) : resolve(JSON.parse(body))
+        )
+      );
+
+    try {
+      const { jql } = await getFilter(filterId);
+      const { issues } = await searchIssuesByJQL(jql);
+
+      res.send({
+        success: true,
+        result: issues
+      });
+    } catch (err) {
+      res.status(500).send({
+        success: false,
+        error: err.toString()
+      })
+    }
   });
 
   // load any additional files you have in routes and apply those to the app
