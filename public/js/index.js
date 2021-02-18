@@ -64,10 +64,10 @@ $(document).ready(function () {
           const { id: statusId } = status;
 
           if (!assignee) {
-            if (!memo.unknown) memo.unknown = {};
-            if (!memo.unknown[statusId]) memo.unknown[statusId] = [];
+            if (!memo["UNKNOWN"]) memo["UNKNOWN"] = {};
+            if (!memo["UNKNOWN"][statusId]) memo["UNKNOWN"][statusId] = [];
 
-            memo.unknown[statusId].push(id);
+            memo["UNKNOWN"][statusId].push(id);
           } else {
             const { accountId } = assignee;
 
@@ -85,7 +85,7 @@ $(document).ready(function () {
         const rows = Object.entries(collection)
           .reduce((memo, [assignee, data]) => {
             const values = Object.keys(statusesCache)
-              .map((k) => data[k] || []);
+              .map((k) => data[k] || 0);
 
             memo.push([
               assigneeCache[assignee] || 'Unknown',
@@ -99,9 +99,7 @@ $(document).ready(function () {
 
         $table.style.display = 'block';
       },
-      error: () => {
-        console.log('error');
-      }
+      error: (err) => console.log(err)
     })
   });
 });
@@ -110,21 +108,15 @@ function fillTableResult ($el, cols, rows) {
   const head = `<td>${cols.join('</td><td>')}</td>`;
 
   const body = rows.map((row) => {
-    console.log(row);
-
-    const cells = row.map((c, i) => {
-      if (Array.isArray(c)) {
-        return c.length
-          ? `<td><a href="${window.baseUrl}/issues/?jql=id in (${c.join()})">${c.length}</a></td>`
-          : `<td>${c.length}</td>`;
-      }
-
-      return `<td>${c}</td>`;
-    });
+    const cells = row.map((c) =>
+      (Array.isArray(c))
+        ? `<td><a href="${window.baseUrl}/issues/?jql=id in (${c.join()})">${c.length}</a></td>`
+        : `<td>${c}</td>`
+    );
 
     return `<tr>${cells.join('')}</tr>`;
   });
 
   $el.insertAdjacentHTML('afterBegin', `<thead><tr>${head}</tr></thead>`);
-  $el.insertAdjacentHTML('beforeEnd', `<tbody>${body}</tbody>`);
+  $el.insertAdjacentHTML('beforeEnd', `<tbody>${body.join('')}</tbody>`);
 }
