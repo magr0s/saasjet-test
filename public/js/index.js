@@ -27,11 +27,11 @@ $(document).ready(function () {
   $filter.addEventListener('change', (evt) => {
     const { value: filterId } = evt.target;
 
-    if (!filterId) {
-      // Hide and clear the results table
-      $table.style.display = 'none'
-      $table.innerHTML = '';
+    // Hide and clear the results table
+    $table.style.display = 'none'
+    $table.innerHTML = '';
 
+    if (!filterId) {
       return ;
     }
 

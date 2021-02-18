@@ -1,5 +1,6 @@
 const fs = require("fs")
 const Logger = require('../libs/Logger');
+const JiraClient = require('../libs/Jira');
 
 module.exports = function (app, addon) {
 
@@ -34,21 +35,21 @@ module.exports = function (app, addon) {
 
   app.get('/main-page', addon.authenticate(), async function (req, res) {
     const httpClient = addon.httpClient(req);
+    const jiraClient = new JiraClient(httpClient);
 
-    httpClient.get('/rest/api/3/filter/search', (err, resp, body) => {
-      if (err) res.status(res.statusCode).send(err);
-
-      const { values: filters } = JSON.parse(body);
+    try {
+      const { values: filters } = await jiraClient.filter.search();
 
       res.render("main-page", { filters });
-    });
+    } catch (err) {
+      res.status(500).send({
+        success: false,
+        error: err.toString()
+      })
+    }
   });
 
-  app.post('/main-page', addon.checkValidToken(), async function (req, res) {
-
-  });
-
-  app.get('/api/filter-result', addon.authenticate(), async function (req, res) {
+  app.get('/api/filter-result', addon.checkValidToken(), async function (req, res) {
     const {
       query: {
         filterId
@@ -56,42 +57,11 @@ module.exports = function (app, addon) {
     } = req;
 
     const httpClient = addon.httpClient(req);
-
-    const getFilter = () =>
-      new Promise((resolve, reject) =>
-        httpClient.get(
-          `/rest/api/3/filter/${filterId}`,
-          async (err, res, body) => {
-            if (err) {
-              await Logger.error('GET_FILTER', err);
-
-              reject(err);
-            }
-
-            resolve(JSON.parse(body));
-          }
-        )
-      );
-
-    const searchIssuesByJQL = (jql) =>
-      new Promise((resolve, reject) =>
-        httpClient.get(
-          `/rest/api/3/search?jql=${jql}`,
-          async (err, res, body) => {
-            if (err) {
-              await Logger.error('SEARCH_ISSUES_BY_JQL', err);
-
-              reject(err);
-            }
-
-            resolve(JSON.parse(body));
-          }
-        )
-      );
+    const jiraClient = new JiraClient(httpClient);
 
     try {
-      const { jql } = await getFilter(filterId);
-      const { issues } = await searchIssuesByJQL(jql);
+      const { jql } = await jiraClient.filter.getFilter(filterId);
+      const { issues } = await jiraClient.issues.searchByJQL(jql);
 
       await Logger.info('SELECT_FILTER');
 
