@@ -94,6 +94,7 @@ module.exports = function (app, addon) {
       const { issues } = await searchIssuesByJQL(jql);
 
       await Logger.info('SELECT_FILTER');
+
       res.send({
         success: true,
         result: issues
@@ -106,18 +107,8 @@ module.exports = function (app, addon) {
     }
   });
 
-  app.post('/api/logger', addon.checkValidToken(), async function (req, res) {
-    const {
-      body: {
-        event,
-        type,
-        message = ''
-      }
-    } = req;
-
-    type === 'error'
-      ? await Logger.error(event, message)
-      : await Logger.info(event, message);
+  app.post('/api/click-logger', addon.checkValidToken(), async function (req, res) {
+    await Logger.info(req.body.event);
 
     res.end();
   });

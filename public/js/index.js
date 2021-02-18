@@ -3,18 +3,25 @@ $(document).ready(function () {
   const $table = document.querySelector('#filter-result');
 
   // Click logger
-  $($table).on('click', 'a', function (e) {
-    const { href } = e.target;
+  $table.addEventListener('click', (e) => {
+    const {
+      href,
+      tagName
+    } = e.target;
 
-    $.ajax({
-      method: 'post',
-      url: '/api/logger',
-      data: {
-        jwt: window.jwt,
-        event: 'LINK_CLICK',
-        message: href
-      }
-    });
+    if (tagName === 'A') {
+      e.preventDefault();
+
+      $.ajax({
+        method: 'post',
+        url: '/api/click-logger',
+        data: {
+          jwt: window.jwt,
+          event: 'LINK_CLICK'
+        }
+      })
+        .done(() => window.top.location.href = href);
+    }
   });
 
   $filter.addEventListener('change', (evt) => {
