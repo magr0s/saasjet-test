@@ -60,14 +60,24 @@ module.exports = function (app, addon) {
     const jiraClient = new JiraClient(httpClient);
 
     try {
-      const { jql } = await jiraClient.filter.getFilter(filterId);
+      const [
+        { jql },
+        statuses
+      ] = await Promise.all([
+        jiraClient.filter.getFilter(filterId),
+        jiraClient.workflow.statuses()
+      ])
+
       const { issues } = await jiraClient.issues.searchByJQL(jql);
 
       await Logger.info('SELECT_FILTER');
 
       res.send({
         success: true,
-        result: issues
+        result: {
+          issues,
+          statuses
+        }
       });
     } catch (err) {
       res.status(500).send({

@@ -43,19 +43,24 @@ $(document).ready(function () {
         filterId
       },
       success: ({ result }) => {
-        const statusesCache = result.reduce((memo, { fields: { status } }) => {
+        const {
+          issues,
+          statuses
+        } = result;
+
+        const statusesCache = issues.reduce((memo, { fields: { status } }) => {
           if (status) memo[status.id] = status.name;
 
           return memo;
         }, {});
 
-        const assigneeCache = result.reduce((memo, { fields: { assignee } }) => {
+        const assigneeCache = issues.reduce((memo, { fields: { assignee } }) => {
           if (assignee) memo[assignee.accountId] = assignee.displayName;
 
           return memo;
         }, {});
 
-        const collection = result.reduce((memo, { id, fields }) => {
+        const collection = issues.reduce((memo, { id, fields }) => {
           const {
             assignee,
             status
@@ -80,12 +85,15 @@ $(document).ready(function () {
           return memo;
         }, {});
 
-        const cols = ['Assignee', ...Object.values(statusesCache)];
+        const cols = [
+          'Assignee',
+
+          ...statuses.map(({ name }) => name)
+        ];
 
         const rows = Object.entries(collection)
           .reduce((memo, [assignee, data]) => {
-            const values = Object.keys(statusesCache)
-              .map((k) => data[k] || 0);
+            const values = statuses.map(({ id }) => data[id] || 0);
 
             memo.push([
               assigneeCache[assignee] || 'Unknown',
