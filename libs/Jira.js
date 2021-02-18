@@ -26,6 +26,14 @@ class JiraClient {
     }
   }
 
+  get workflow () {
+    const statuses = async () => this.request('/rest/api/3/status');
+
+    return {
+      statuses
+    }
+  }
+
   request (endpoint) {
     return new Promise(
       (resolve, reject) =>
