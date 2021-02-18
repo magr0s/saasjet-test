@@ -1,5 +1,7 @@
 const Logger = require('./Logger');
 
+const API_PATH = '/rest/api/3';
+
 class JiraClient {
   constructor (httpClient) {
     this.httpClient = httpClient;
@@ -7,10 +9,10 @@ class JiraClient {
 
   get filter () {
     const search = async () =>
-      this.request('/rest/api/3/filter/search');
+      this.request(`${API_PATH}/filter/search`);
 
     const getFilter = async (id) =>
-      this.request(`/rest/api/3/filter/${id}`);
+      this.request(`${API_PATH}/filter/${id}`);
 
     return {
       search,
@@ -19,7 +21,7 @@ class JiraClient {
   }
 
   get issues () {
-    const searchByJQL = async (jql) => this.request(`/rest/api/3/search?jql=${jql}`);
+    const searchByJQL = async (jql) => this.request(`${API_PATH}/search?jql=${jql}`);
 
     return {
       searchByJQL
@@ -27,7 +29,7 @@ class JiraClient {
   }
 
   get workflow () {
-    const statuses = async () => this.request('/rest/api/3/status');
+    const statuses = async () => this.request(`${API_PATH}/status`);
 
     return {
       statuses
