@@ -2,6 +2,21 @@ $(document).ready(function () {
   const $filter = document.querySelector('#filter-select');
   const $table = document.querySelector('#filter-result');
 
+  // Click logger
+  $($table).on('click', 'a', function (e) {
+    const { href } = e.target;
+
+    $.ajax({
+      method: 'post',
+      url: '/api/logger',
+      data: {
+        jwt: window.jwt,
+        event: 'LINK_CLICK',
+        message: href
+      }
+    });
+  });
+
   $filter.addEventListener('change', (evt) => {
     const { value: filterId } = evt.target;
 

@@ -9,6 +9,8 @@ var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var app = express();
 
+const mysql2 = require('mysql2');
+
 
 
 app.use(bodyParser.json(/*{limit: '50mb', extended: true}*/));
@@ -43,9 +45,18 @@ async function getdb() {
         useNewUrlParser: true,
         useUnifiedTopology: true
     });
-    
+
     global.database = await global.connection.db(global.databaseName);
 
+  // Init MySql database
+  const mysql = mysql2.createPool({
+    host: 'localhost',
+    user: 'root',
+    password: 'H}s24*EF',
+    database: 'jira'
+  });
+
+  global.mysql = mysql;
 
 // var MemoryStore = require('session-memory-store')(session);
     var compression = require('compression');

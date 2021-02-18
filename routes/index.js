@@ -1,5 +1,5 @@
-const { rejects } = require("assert");
 const fs = require("fs")
+const Logger = require('../libs/Logger');
 
 module.exports = function (app, addon) {
 
@@ -61,7 +61,15 @@ module.exports = function (app, addon) {
       new Promise((resolve, reject) =>
         httpClient.get(
           `/rest/api/3/filter/${filterId}`,
-          (err, res, body) => err ? reject(err) : resolve(JSON.parse(body))
+          async (err, res, body) => {
+            if (err) {
+              await Logger.error('GET_FILTER', err);
+
+              reject(err);
+            }
+
+            resolve(JSON.parse(body));
+          }
         )
       );
 
@@ -69,7 +77,15 @@ module.exports = function (app, addon) {
       new Promise((resolve, reject) =>
         httpClient.get(
           `/rest/api/3/search?jql=${jql}`,
-          (err, res, body) => err ? reject(err) : resolve(JSON.parse(body))
+          async (err, res, body) => {
+            if (err) {
+              await Logger.error('SEARCH_ISSUES_BY_JQL', err);
+
+              reject(err);
+            }
+
+            resolve(JSON.parse(body));
+          }
         )
       );
 
@@ -77,6 +93,7 @@ module.exports = function (app, addon) {
       const { jql } = await getFilter(filterId);
       const { issues } = await searchIssuesByJQL(jql);
 
+      await Logger.info('SELECT_FILTER');
       res.send({
         success: true,
         result: issues
@@ -87,6 +104,22 @@ module.exports = function (app, addon) {
         error: err.toString()
       })
     }
+  });
+
+  app.post('/api/logger', addon.checkValidToken(), async function (req, res) {
+    const {
+      body: {
+        event,
+        type,
+        message = ''
+      }
+    } = req;
+
+    type === 'error'
+      ? await Logger.error(event, message)
+      : await Logger.info(event, message);
+
+    res.end();
   });
 
   // load any additional files you have in routes and apply those to the app
