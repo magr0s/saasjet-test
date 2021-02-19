@@ -48,12 +48,6 @@ $(document).ready(function () {
           statuses
         } = result;
 
-        const statusesCache = issues.reduce((memo, { fields: { status } }) => {
-          if (status) memo[status.id] = status.name;
-
-          return memo;
-        }, {});
-
         const assigneeCache = issues.reduce((memo, { fields: { assignee } }) => {
           if (assignee) memo[assignee.accountId] = assignee.displayName;
 
