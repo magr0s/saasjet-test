@@ -83,11 +83,11 @@ $(document).ready(function () {
 
         const rows = Object.entries(collection)
           .reduce((memo, [assignee, data]) => {
-            const values = statuses.map(({ id }) => data[id] || 0);
+            const cells = statues.map(({ id }) => Number(!!data[id]) && data[id]);
 
             memo.push([
-              assigneeCache[assignee] || 'Unknown',
-              ...values
+              assigneeCache[assignee] || assignee,
+              ...cells
             ]);
 
             return memo;
