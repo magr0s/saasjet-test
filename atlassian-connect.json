@@ -7,10 +7,10 @@
         "name": "SaaSJet",
         "url": "https://saasjet.com"
     },
-    "baseUrl": "https://7cd8561dedcd.ngrok.io", /** <=== INSERT YOUR PUBLIC URL HERE (u can use ngrok or a domain name if u have). Delete this comment */
+    "baseUrl": "https://fa600ce032f8.ngrok.io", /** <=== INSERT YOUR PUBLIC URL HERE (u can use ngrok or a domain name if u have). Delete this comment */
     "links": {
-        "self": "https://7cd8561dedcd.ngrok.io/atlassian-connect.json",
-        "homepage": "https://7cd8561dedcd.ngrok.io/atlassian-connect.json"
+        "self": "https://fa600ce032f8.ngrok.io/atlassian-connect.json",
+        "homepage": "https://fa600ce032f8.ngrok.io/atlassian-connect.json"
     },
     "authentication": {
         "type": "jwt"
