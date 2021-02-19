@@ -62,20 +62,15 @@ $(document).ready(function () {
           } = fields;
 
           const { id: statusId } = status;
+          const assigneeId = !assignee ? assignee.accountId : '[FREE]';
 
-          if (!assignee) {
-            if (!memo["UNKNOWN"]) memo["UNKNOWN"] = {};
-            if (!memo["UNKNOWN"][statusId]) memo["UNKNOWN"][statusId] = [];
+          if (!memo[assigneeId])
+            memo[assigneeId] = {};
 
-            memo["UNKNOWN"][statusId].push(id);
-          } else {
-            const { accountId } = assignee;
+          if (!memo[assigneeId][statusId])
+            memo[assigneeId][statusId] = [];
 
-            if (!memo[accountId]) memo[accountId] = {};
-            if (!memo[accountId][statusId]) memo[accountId][statusId] = [];
-
-            memo[accountId][statusId].push(id);
-          }
+          memo[assigneeId][statusId].push(id);
 
           return memo;
         }, {});
