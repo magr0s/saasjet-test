@@ -61,14 +61,14 @@ module.exports = function (app, addon) {
 
     try {
       const [
-        { jql },
+        filter,
         statuses
       ] = await Promise.all([
         jiraClient.filter.getFilter(filterId),
         jiraClient.workflow.statuses()
       ])
 
-      const { issues } = await jiraClient.issues.searchByJQL(jql);
+      const { issues } = await jiraClient.issues.searchByJQL(filter.jql);
 
       await Logger.info('SELECT_FILTER');
 
@@ -76,7 +76,8 @@ module.exports = function (app, addon) {
         success: true,
         result: {
           issues,
-          statuses
+          statuses,
+          filter
         }
       });
     } catch (err) {

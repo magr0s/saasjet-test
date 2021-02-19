@@ -45,7 +45,8 @@ $(document).ready(function () {
       success: ({ result }) => {
         const {
           issues,
-          statuses
+          statuses,
+          filter
         } = result;
 
         const assigneeCache = issues.reduce((memo, { fields: { assignee } }) => {
