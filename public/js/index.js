@@ -129,7 +129,7 @@ function resultTableRenderer ($el, cols, rows) {
   const body = rows.map((row) =>
     '<tr>' +
     row.map(c =>
-      (!c || typeof (c) !== 'object') ? cell(c) : cellWithLink(c)) +
+      (!c || typeof (c) !== 'object') ? cell(c) : cellWithLink(c)).join('') +
     '</tr>'
   );
 
