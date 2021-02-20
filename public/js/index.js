@@ -90,12 +90,17 @@ $(document).ready(function () {
             assigneeName &&
               jqlQuery.push(`assignee = ${assignee}`);
 
-            const cells = statues.map(({ id }) => {
-              jqlQuery.push(`status = ${id}`);
+            const cells = statuses.map(({ id }) => {
+              let jql = [...jqlQuery, `status = ${id}`]
+                .reverse()
+                .join(' AND ');
+
+              // TODO:
+              const sanitizeJQL = (str) => str.replace('AND ORDER BY', 'ORDER BY');
 
               return Number(!!data[id]) && {
                 value: data[id],
-                jql: jqlQuery.reverse().join(' AND ')
+                jql: sanitizeJQL(jql)
               }
             });
 
