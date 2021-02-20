@@ -62,7 +62,7 @@ $(document).ready(function () {
           } = fields;
 
           const { id: statusId } = status;
-          const assigneeId = !assignee ? assignee.accountId : '[FREE]';
+          const assigneeId = assignee ? assignee.accountId : '[FREE]';
 
           if (!memo[assigneeId])
             memo[assigneeId] = {};
