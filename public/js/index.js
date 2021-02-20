@@ -70,9 +70,9 @@ $(document).ready(function () {
             memo[assigneeId] = {};
 
           if (!memo[assigneeId][statusId])
-            memo[assigneeId][statusId] = [];
+            memo[assigneeId][statusId] = 0;
 
-          memo[assigneeId][statusId].push(id);
+          memo[assigneeId][statusId] += 1;
 
           return memo;
         }, {});
@@ -135,7 +135,11 @@ function fillTableResult ($el, cols, rows) {
         jql
       } = c;
 
+<<<<<<< HEAD
       return `<td><a href="${window.baseUrl}/issues/?jql=${jql}">${value.length}</a></td>`;
+=======
+      return `<td><a href="${window.baseUrl}/issues/?jql=${jql}">${value}</a></td>`;
+>>>>>>> refactor_cell_value
     });
 
     return `<tr>${cells.join('')}</tr>`;
