@@ -112,7 +112,7 @@ $(document).ready(function () {
             return memo;
           }, []);
 
-        fillTableResult($table, cols, rows);
+        resultTableRenderer($table, cols, rows);
 
         $table.style.display = 'block';
       },
@@ -121,26 +121,19 @@ $(document).ready(function () {
   });
 });
 
-function fillTableResult ($el, cols, rows) {
-  const head = `<td>${cols.join('</td><td>')}</td>`;
+function resultTableRenderer ($el, cols, rows) {
+  const cell = (value) => `<td>${value}</td>`;
+  const cellWithLink = ({ value, jql }) => cell(`<a href="${window.baseUrl}/issues/?jql=${jql}">${value}</a>`);
 
-  const body = rows.map((row) => {
-    const cells = row.map((c) => {
-      if (!c || typeof (c) !== 'object') {
-        return `<td>${c}</td>`
-      }
+  const thead = `<thead><tr><td>${cols.join('</td><td>')}</td></tr></thead>`;
+  const body = rows.map((row) =>
+    '<tr>' +
+    row.map(c =>
+      (!c || typeof (c) !== 'object') ? cell(c) : cellWithLink(c)) +
+    '</tr>'
+  );
 
-      const {
-        value,
-        jql
-      } = c;
+  const table = `${thead}<tbody>${body.join('')}</tbody>`
 
-      return `<td><a href="${window.baseUrl}/issues/?jql=${jql}">${value}</a></td>`;
-    });
-
-    return `<tr>${cells.join('')}</tr>`;
-  });
-
-  $el.insertAdjacentHTML('afterBegin', `<thead><tr>${head}</tr></thead>`);
-  $el.insertAdjacentHTML('beforeEnd', `<tbody>${body.join('')}</tbody>`);
+  $el.insertAdjacentHTML('beforeEnd', table);
 }
