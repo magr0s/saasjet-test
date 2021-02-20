@@ -49,6 +49,8 @@ $(document).ready(function () {
           filter
         } = result;
 
+        const jqlQuery = [filter.jql];
+
         const assigneeCache = issues.reduce((memo, { fields: { assignee } }) => {
           if (assignee) memo[assignee.accountId] = assignee.displayName;
 
@@ -83,10 +85,22 @@ $(document).ready(function () {
 
         const rows = Object.entries(collection)
           .reduce((memo, [assignee, data]) => {
-            const cells = statuses.map(({ id }) => Number(!!data[id]) && data[id]);
+            const assigneeName = assigneeCache[assignee];
+
+            assigneeName &&
+              jqlQuery.push(`assignee = ${assignee}`);
+
+            const cells = statues.map(({ id }) => {
+              jqlQuery.push(`status = ${id}`);
+
+              return Number(!!data[id]) && {
+                value: data[id],
+                jql: jqlQuery.reverse().join(' AND ')
+              }
+            });
 
             memo.push([
-              assigneeCache[assignee] || assignee,
+              assigneeName || '[FREE]',
               ...cells
             ]);
 
@@ -106,11 +120,18 @@ function fillTableResult ($el, cols, rows) {
   const head = `<td>${cols.join('</td><td>')}</td>`;
 
   const body = rows.map((row) => {
-    const cells = row.map((c) =>
-      (Array.isArray(c))
-        ? `<td><a href="${window.baseUrl}/issues/?jql=id in (${c.join()})">${c.length}</a></td>`
-        : `<td>${c}</td>`
-    );
+    const cells = row.map((c) => {
+      if (!c || typeof (c) !== 'object') {
+        return `<td>${c}</td>`
+      }
+
+      const {
+        value,
+        jql
+      } = c;
+
+      return `<td><a href="${window.baseUrl}/issues/?jql=${jql}">${value.length}</a></td>`;
+    });
 
     return `<tr>${cells.join('')}</tr>`;
   });
